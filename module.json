@@ -1,0 +1,10 @@
+{
+    "name": "Perfex Toolkit",
+    "description": "A growing collection of essential daily-use tools and tweaks missing from Perfex CRM",
+    "version": "1.0.0",
+    "requires": ["2.3.0"],
+    "author": "Custom",
+    "settings": {
+        "enabled": true
+    }
+}
