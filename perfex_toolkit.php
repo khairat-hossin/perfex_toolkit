@@ -80,4 +80,14 @@ function perfex_toolkit_init_menu_items()
             'icon'     => 'fa-solid fa-image',
         ]);
     }
+
+    if (is_admin() && ! empty($statuses['download_module'])) {
+        $CI->app_menu->add_sidebar_children_item('perfex-toolkit', [
+            'slug'     => 'perfex-toolkit-download-module',
+            'name'     => _l('perfex_toolkit_nav_download_module'),
+            'href'     => admin_url('perfex_toolkit/download_module'),
+            'position' => 4,
+            'icon'     => 'fa-solid fa-download',
+        ]);
+    }
 }

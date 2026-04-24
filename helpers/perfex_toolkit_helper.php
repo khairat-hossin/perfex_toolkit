@@ -50,3 +50,55 @@ if (! function_exists('get_alternative_logo')) {
         echo '<img src="' . html_escape($logoUrl) . '" class="logo img-responsive" alt="' . html_escape($company) . '">';
     }
 }
+
+if (! function_exists('ptk_get_installed_modules')) {
+    /**
+     * List installed custom modules (folders under /modules with a matching {slug}.php file).
+     *
+     * @return array[] Each item: slug, name, version
+     */
+    function ptk_get_installed_modules()
+    {
+        $modules_path = FCPATH . 'modules' . DIRECTORY_SEPARATOR;
+        if (! is_dir($modules_path)) {
+            return [];
+        }
+
+        $entries = scandir($modules_path);
+        $modules   = [];
+
+        foreach ($entries as $slug) {
+            if ($slug === '.' || $slug === '..') {
+                continue;
+            }
+            $dir       = $modules_path . $slug;
+            $main_file = $dir . DIRECTORY_SEPARATOR . $slug . '.php';
+            if (! is_dir($dir) || ! file_exists($main_file)) {
+                continue;
+            }
+
+            $header  = (string) file_get_contents($main_file, false, null, 0, 2048);
+            $name    = $slug;
+            $version = '-';
+
+            if (preg_match('/Module Name:\s*(.+)/i', $header, $m)) {
+                $name = trim($m[1]);
+            }
+            if (preg_match('/Version:\s*(.+)/i', $header, $m)) {
+                $version = trim($m[1]);
+            }
+
+            $modules[] = [
+                'slug'    => $slug,
+                'name'    => $name,
+                'version' => $version,
+            ];
+        }
+
+        usort($modules, static function ($a, $b) {
+            return strcasecmp($a['name'], $b['name']);
+        });
+
+        return $modules;
+    }
+}

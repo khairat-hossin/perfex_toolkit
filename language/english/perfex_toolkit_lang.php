@@ -75,6 +75,23 @@ $lang['perfex_toolkit_alternative_logos_upload_error_dir']         = 'Upload fol
 $lang['perfex_toolkit_alternative_logos_upload_error_move']        = 'Could not save the file. Try again.';
 $lang['perfex_toolkit_alternative_logos_upload_error_duplicate']   = 'This logo # is already used. Please choose another number.';
 $lang['perfex_toolkit_alternative_logos_upload_error_db']          = 'Could not save the record.';
+$lang['perfex_toolkit_nav_download_module']                        = 'Download module';
+
+$lang['perfex_toolkit_feature_download_module_name'] = 'Download Module';
+$lang['perfex_toolkit_feature_download_module_desc'] = 'Browse all installed Perfex CRM modules and download any of them as a ZIP file.';
+
+$lang['perfex_toolkit_download_module_title']          = 'Download Module';
+$lang['perfex_toolkit_download_module_intro']          = 'Browse all installed modules and download their source code as a ZIP file.';
+$lang['perfex_toolkit_download_module_col_name']       = 'Module Name';
+$lang['perfex_toolkit_download_module_col_folder']     = 'Folder';
+$lang['perfex_toolkit_download_module_col_version']    = 'Version';
+$lang['perfex_toolkit_download_module_col_status']     = 'Status';
+$lang['perfex_toolkit_download_module_col_action']     = 'Action';
+$lang['perfex_toolkit_download_module_btn_download']   = 'Download';
+$lang['perfex_toolkit_download_module_not_found']      = 'Module not found.';
+$lang['perfex_toolkit_download_module_zip_unavailable'] = 'ZipArchive is not available on this server.';
+$lang['perfex_toolkit_download_module_zip_error']      = 'Could not create ZIP file. Check server permissions.';
+
 $lang['perfex_toolkit_alternative_logos_delete_confirm']           = 'Are you sure you want to delete this logo?';
 $lang['perfex_toolkit_alternative_logos_delete_success']           = 'Logo deleted successfully.';
 $lang['perfex_toolkit_alternative_logos_delete_error']             = 'Could not delete the logo.';

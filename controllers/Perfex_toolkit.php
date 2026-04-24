@@ -37,7 +37,7 @@ class Perfex_toolkit extends AdminController
         $key    = $this->input->post('feature_key');
         $action = $this->input->post('action'); // 'activate' | 'deactivate'
 
-        $allowed_keys = ['delete_invoices', 'alternative_logos'];
+        $allowed_keys = ['delete_invoices', 'alternative_logos', 'download_module'];
         if (! in_array($key, $allowed_keys, true) || ! in_array($action, ['activate', 'deactivate'], true)) {
             echo json_encode(['success' => false, 'message' => _l('perfex_toolkit_feature_toggle_invalid')]);
 
@@ -172,6 +172,15 @@ class Perfex_toolkit extends AdminController
                 'icon'        => 'fa-solid fa-image',
                 'available'   => is_admin(),
                 'active'      => $statuses['alternative_logos'] ?? true,
+            ],
+            [
+                'key'         => 'download_module',
+                'name'        => _l('perfex_toolkit_feature_download_module_name'),
+                'description' => _l('perfex_toolkit_feature_download_module_desc'),
+                'url'         => admin_url('perfex_toolkit/download_module'),
+                'icon'        => 'fa-solid fa-download',
+                'available'   => is_admin(),
+                'active'      => $statuses['download_module'] ?? true,
             ],
         ];
 

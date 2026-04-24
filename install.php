@@ -69,5 +69,14 @@ if (! $CI->db->table_exists($features_table)) {
             'activated_at'        => $now,
             'deactivated_at'      => null,
         ],
+        [
+            'feature_key'         => 'download_module',
+            'feature_name'        => 'Download Module',
+            'feature_description' => 'Browse all installed Perfex CRM modules and download any of them as a ZIP file.',
+            'category'            => 'developer',
+            'is_active'           => 1,
+            'activated_at'        => $now,
+            'deactivated_at'      => null,
+        ],
     ]);
 }
