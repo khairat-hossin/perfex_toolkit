@@ -14,6 +14,17 @@ $lang['perfex_toolkit_open_feature']    = 'Open';
 $lang['perfex_toolkit_feature_no_access']       = 'You do not have permission to use this feature.';
 $lang['perfex_toolkit_feature_no_access_short'] = 'Not available for your role';
 
+$lang['perfex_toolkit_feature_status_active']   = 'Active';
+$lang['perfex_toolkit_feature_status_inactive'] = 'Inactive';
+$lang['perfex_toolkit_feature_btn_activate']    = 'Activate';
+$lang['perfex_toolkit_feature_btn_deactivate']  = 'Deactivate';
+$lang['perfex_toolkit_feature_deactivate_confirm']          = 'Deactivate this feature? It will be hidden from the menu until re-activated.';
+$lang['perfex_toolkit_feature_toggle_activate_success']     = 'Feature activated successfully.';
+$lang['perfex_toolkit_feature_toggle_deactivate_success']   = 'Feature deactivated successfully.';
+$lang['perfex_toolkit_feature_toggle_error']                = 'Could not update feature status. Please try again.';
+$lang['perfex_toolkit_feature_toggle_invalid']              = 'Invalid request.';
+$lang['perfex_toolkit_feature_not_active']                  = 'This feature is not active. Activate it from the Toolkit dashboard.';
+
 $lang['perfex_toolkit_feature_delete_invoices_name'] = 'Delete invoices';
 $lang['perfex_toolkit_feature_delete_invoices_desc'] = 'Filter by status and date, select invoices, and delete in bulk. Uses the same delete rules as the rest of Perfex (e.g. last invoice, payments).';
 $lang['perfex_toolkit_feature_alternative_logos_name'] = 'Alternative logos';

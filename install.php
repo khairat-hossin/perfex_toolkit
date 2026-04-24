@@ -2,13 +2,10 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-/**
- * Table: {prefix}ptk_alternative_logos
- * @see migrations/101_alternative_logo.php
- */
 $CI = &get_instance();
 $CI->load->dbforge();
 
+// --- alternative logos table ---
 $logo_table = db_prefix() . 'ptk_alternative_logos';
 
 if (! $CI->db->table_exists($logo_table)) {
@@ -24,8 +21,6 @@ if (! $CI->db->table_exists($logo_table)) {
         UNIQUE KEY `uniq_logo_for_number` (`logo_for`, `logo_number`),
         KEY `idx_logo_for` (`logo_for`)
     ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
-} elseif (! $CI->db->field_exists('file_path', $logo_table)) {
-    $CI->db->query('ALTER TABLE `' . $logo_table . '` ADD `file_path` varchar(500) NULL DEFAULT NULL AFTER `description`');
 }
 
 $ptk_logo_uploads = rtrim(FCPATH, DIRECTORY_SEPARATOR . '/') . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'perfex_toolkit' . DIRECTORY_SEPARATOR . 'alternative_logos';
@@ -34,4 +29,45 @@ if (! is_dir($ptk_logo_uploads)) {
 }
 if (is_dir($ptk_logo_uploads) && ! file_exists($ptk_logo_uploads . DIRECTORY_SEPARATOR . 'index.html')) {
     @file_put_contents($ptk_logo_uploads . DIRECTORY_SEPARATOR . 'index.html', '');
+}
+
+// --- features table ---
+$features_table = db_prefix() . 'ptk_features';
+
+if (! $CI->db->table_exists($features_table)) {
+    $CI->db->query("CREATE TABLE `{$features_table}` (
+        `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+        `feature_key` varchar(100) NOT NULL,
+        `feature_name` varchar(150) NOT NULL DEFAULT '',
+        `feature_description` text NULL,
+        `category` varchar(100) NOT NULL DEFAULT 'general',
+        `is_active` tinyint(1) NOT NULL DEFAULT 1,
+        `activated_at` datetime NULL DEFAULT NULL,
+        `deactivated_at` datetime NULL DEFAULT NULL,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `uniq_feature_key` (`feature_key`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=" . $CI->db->char_set . ';');
+
+    // seed all known features as active
+    $now = date('Y-m-d H:i:s');
+    $CI->db->insert_batch($features_table, [
+        [
+            'feature_key'         => 'delete_invoices',
+            'feature_name'        => 'Delete Invoices',
+            'feature_description' => 'Filter by status and date, select invoices, and delete in bulk. Uses the same delete rules as the rest of Perfex (e.g. last invoice, payments).',
+            'category'            => 'invoices',
+            'is_active'           => 1,
+            'activated_at'        => $now,
+            'deactivated_at'      => null,
+        ],
+        [
+            'feature_key'         => 'alternative_logos',
+            'feature_name'        => 'Alternative Logos',
+            'feature_description' => 'Manage extra logo slots (number 2+; slot 1 is the main company logo).',
+            'category'            => 'branding',
+            'is_active'           => 1,
+            'activated_at'        => $now,
+            'deactivated_at'      => null,
+        ],
+    ]);
 }

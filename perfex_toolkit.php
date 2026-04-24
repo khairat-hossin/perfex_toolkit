@@ -12,7 +12,8 @@ Module Name: Perfex Toolkit
 Description: A growing collection of essential daily-use tools and tweaks missing from Perfex CRM.
 Version: 1.0.0
 Requires at least: 2.3.*
-Author: Custom
+Author: Khairat Hossin
+Author URI: https://www.fiverr.com/khairathossin/expertly-install-customize-and-fix-your-perfex-crm
  */
 
 define('PERFEX_TOOLKIT_MODULE_NAME', 'perfex_toolkit');
@@ -37,10 +38,13 @@ function perfex_toolkit_uninstall_hook()
 
 /**
  * Collapsible parent with Dashboard + feature children.
+ * Feature menu items only appear when the feature is active.
  */
 function perfex_toolkit_init_menu_items()
 {
     $CI = &get_instance();
+    $CI->load->model(PERFEX_TOOLKIT_MODULE_NAME . '/ptk_features_model');
+    $statuses = $CI->ptk_features_model->get_statuses_keyed();
 
     $CI->app_menu->add_sidebar_menu_item('perfex-toolkit', [
         'collapse' => true,
@@ -57,7 +61,7 @@ function perfex_toolkit_init_menu_items()
         'icon'     => 'fa fa-tachometer',
     ]);
 
-    if (! staff_cant('view', 'invoices')) {
+    if (! staff_cant('view', 'invoices') && ! empty($statuses['delete_invoices'])) {
         $CI->app_menu->add_sidebar_children_item('perfex-toolkit', [
             'slug'     => 'perfex-toolkit-delete-invoices',
             'name'     => _l('perfex_toolkit_nav_delete_invoices'),
@@ -67,7 +71,7 @@ function perfex_toolkit_init_menu_items()
         ]);
     }
 
-    if (is_admin()) {
+    if (is_admin() && ! empty($statuses['alternative_logos'])) {
         $CI->app_menu->add_sidebar_children_item('perfex-toolkit', [
             'slug'     => 'perfex-toolkit-alternative-logos',
             'name'     => _l('perfex_toolkit_nav_alternative_logos'),

@@ -10,6 +10,11 @@ class Alternative_logos extends AdminController
         if (! is_admin()) {
             access_denied();
         }
+        $this->load->model('perfex_toolkit/ptk_features_model');
+        if (! $this->ptk_features_model->is_active('alternative_logos')) {
+            set_alert('danger', _l('perfex_toolkit_feature_not_active'));
+            redirect(admin_url('perfex_toolkit'));
+        }
         $this->load->model('Alternative_logos_model', 'alternative_logos_model');
         $this->load->library('form_validation');
     }

@@ -7,6 +7,7 @@ class Perfex_toolkit extends AdminController
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('perfex_toolkit/ptk_features_model');
     }
 
     /**
@@ -14,10 +15,48 @@ class Perfex_toolkit extends AdminController
      */
     public function index()
     {
-        $data['title'] = _l('perfex_toolkit_dashboard');
+        $data['title']    = _l('perfex_toolkit_dashboard');
         $data['features'] = $this->get_feature_definitions();
 
         $this->load->view('dashboard', $data);
+    }
+
+    /**
+     * AJAX: activate or deactivate a feature. Admin-only.
+     */
+    public function toggle_feature()
+    {
+        if (! $this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        if (! is_admin()) {
+            ajax_access_denied();
+        }
+
+        $key    = $this->input->post('feature_key');
+        $action = $this->input->post('action'); // 'activate' | 'deactivate'
+
+        $allowed_keys = ['delete_invoices', 'alternative_logos'];
+        if (! in_array($key, $allowed_keys, true) || ! in_array($action, ['activate', 'deactivate'], true)) {
+            echo json_encode(['success' => false, 'message' => _l('perfex_toolkit_feature_toggle_invalid')]);
+
+            return;
+        }
+
+        if ($action === 'activate') {
+            $result = $this->ptk_features_model->activate($key);
+        } else {
+            $result = $this->ptk_features_model->deactivate($key);
+        }
+
+        echo json_encode([
+            'success'   => (bool) $result,
+            'is_active' => $action === 'activate',
+            'message'   => $result
+                ? _l('perfex_toolkit_feature_toggle_' . $action . '_success')
+                : _l('perfex_toolkit_feature_toggle_error'),
+        ]);
     }
 
     /**
@@ -27,6 +66,11 @@ class Perfex_toolkit extends AdminController
     {
         if (staff_cant('view', 'invoices')) {
             access_denied('invoices');
+        }
+
+        if (! $this->ptk_features_model->is_active('delete_invoices')) {
+            set_alert('danger', _l('perfex_toolkit_feature_not_active'));
+            redirect(admin_url('perfex_toolkit'));
         }
 
         $this->load->model('invoices_model');
@@ -104,11 +148,13 @@ class Perfex_toolkit extends AdminController
     /**
      * Register each feature for the dashboard (add new items here as you add tools).
      *
-     * @return array<int, array{key:string,name:string,description:string,url:string,icon:string,available:bool}>
+     * @return array<int, array{key:string,name:string,description:string,url:string,icon:string,available:bool,active:bool}>
      */
     private function get_feature_definitions()
     {
-        $features = [
+        $statuses = $this->ptk_features_model->get_statuses_keyed();
+
+        $all = [
             [
                 'key'         => 'delete_invoices',
                 'name'        => _l('perfex_toolkit_feature_delete_invoices_name'),
@@ -116,20 +162,26 @@ class Perfex_toolkit extends AdminController
                 'url'         => admin_url('perfex_toolkit/delete_invoices'),
                 'icon'        => 'fa-solid fa-file-invoice',
                 'available'   => ! staff_cant('view', 'invoices'),
+                'active'      => $statuses['delete_invoices'] ?? true,
             ],
-        ];
-
-        if (is_admin()) {
-            $features[] = [
+            [
                 'key'         => 'alternative_logos',
                 'name'        => _l('perfex_toolkit_feature_alternative_logos_name'),
                 'description' => _l('perfex_toolkit_feature_alternative_logos_desc'),
                 'url'         => admin_url('perfex_toolkit/alternative_logos'),
                 'icon'        => 'fa-solid fa-image',
-                'available'   => true,
-            ];
+                'available'   => is_admin(),
+                'active'      => $statuses['alternative_logos'] ?? true,
+            ],
+        ];
+
+        // Non-admins only see features that are active AND available to them
+        if (! is_admin()) {
+            $all = array_values(array_filter($all, static function ($f) {
+                return ! empty($f['active']) && ! empty($f['available']);
+            }));
         }
 
-        return $features;
+        return $all;
     }
 }
