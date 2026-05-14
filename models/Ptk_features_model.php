@@ -34,7 +34,7 @@ class Ptk_features_model extends App_Model
     {
         $row = $this->db->where('feature_key', $key)->get($this->table())->row();
 
-        return $row ? (bool) $row->is_active : false;
+        return $row ? (bool) $row->is_active : true;
     }
 
     /**
@@ -42,9 +42,17 @@ class Ptk_features_model extends App_Model
      */
     public function activate($key)
     {
-        $this->db->where('feature_key', $key);
+        if ($this->_row_exists($key)) {
+            $this->db->where('feature_key', $key);
 
-        return $this->db->update($this->table(), [
+            return $this->db->update($this->table(), [
+                'is_active'    => 1,
+                'activated_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
+        return $this->db->insert($this->table(), [
+            'feature_key'  => $key,
             'is_active'    => 1,
             'activated_at' => date('Y-m-d H:i:s'),
         ]);
@@ -55,11 +63,27 @@ class Ptk_features_model extends App_Model
      */
     public function deactivate($key)
     {
-        $this->db->where('feature_key', $key);
+        if ($this->_row_exists($key)) {
+            $this->db->where('feature_key', $key);
 
-        return $this->db->update($this->table(), [
+            return $this->db->update($this->table(), [
+                'is_active'      => 0,
+                'deactivated_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
+        return $this->db->insert($this->table(), [
+            'feature_key'    => $key,
             'is_active'      => 0,
             'deactivated_at' => date('Y-m-d H:i:s'),
         ]);
+    }
+
+    /**
+     * @return bool
+     */
+    private function _row_exists($key)
+    {
+        return $this->db->where('feature_key', $key)->count_all_results($this->table()) > 0;
     }
 }
