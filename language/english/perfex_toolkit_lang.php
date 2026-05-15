@@ -93,8 +93,8 @@ $lang['perfex_toolkit_download_module_zip_unavailable'] = 'ZipArchive is not ava
 $lang['perfex_toolkit_download_module_zip_error']      = 'Could not create ZIP file. Check server permissions.';
 
 // Duplicate web-to-lead form
-$lang['perfex_toolkit_nav_duplicate_wtl_form']          = 'Duplicate web-to-lead form';
-$lang['perfex_toolkit_feature_dup_wtl_name']            = 'Duplicate Web-to-Lead Form';
+$lang['perfex_toolkit_nav_duplicate_wtl_form']          = 'Duplicate WTL form';
+$lang['perfex_toolkit_feature_dup_wtl_name']            = 'Duplicate WTL form';
 $lang['perfex_toolkit_feature_dup_wtl_desc']            = 'Browse all web-to-lead forms and duplicate any of them with a single click. The copy opens in the form editor ready to customise.';
 $lang['perfex_toolkit_dup_wtl_title']                   = 'Duplicate Web-to-Lead Form';
 $lang['perfex_toolkit_dup_wtl_intro']                   = 'Select a form below and click Duplicate. A full copy will be created and opened in the editor for you to customise.';
