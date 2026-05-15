@@ -12,7 +12,9 @@
       "Bash(mkdir -p /opt/homebrew/var/www/perfex_crm/uploads/clients/25)",
       "Bash(cp /opt/homebrew/var/www/perfex_crm/uploads/leads/270/a16f7e0b-b140-4c80-b63b-d898fa0cd78b.png /opt/homebrew/var/www/perfex_crm/uploads/clients/25/a16f7e0b-b140-4c80-b63b-d898fa0cd78b.png)",
       "Bash(mkdir -p /opt/homebrew/var/www/perfex_crm/uploads/clients/24)",
-      "Bash(cp /opt/homebrew/var/www/perfex_crm/uploads/leads/274/pdf-test.pdf /opt/homebrew/var/www/perfex_crm/uploads/clients/24/pdf-test.pdf)"
+      "Bash(cp /opt/homebrew/var/www/perfex_crm/uploads/leads/274/pdf-test.pdf /opt/homebrew/var/www/perfex_crm/uploads/clients/24/pdf-test.pdf)",
+      "Bash(mysql -uroot perfex_crm_340 -e ' *)",
+      "Bash(mysql -uroot perfex_crm_340 -e \"SELECT feature_key, is_active FROM tblptk_features; SELECT name FROM tbloptions WHERE name='ptk_lead_files_to_customer';\")"
     ]
   }
 }

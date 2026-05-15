@@ -110,18 +110,6 @@ $lang['perfex_toolkit_dup_wtl_success']                 = 'Form duplicated succe
 $lang['perfex_toolkit_dup_wtl_error']                   = 'Could not duplicate the form. Please try again.';
 $lang['perfex_toolkit_dup_wtl_not_found']               = 'Form not found.';
 
-// Copy lead files to customer
-$lang['perfex_toolkit_nav_lftc']                  = 'Copy lead files to customer';
-$lang['perfex_toolkit_feature_lftc_name']         = 'Copy Lead Files to Customer';
-$lang['perfex_toolkit_feature_lftc_desc']         = 'Automatically copies all lead attachments to the customer profile when a lead is converted to a customer.';
-$lang['perfex_toolkit_lftc_title']                = 'Copy Lead Files to Customer';
-$lang['perfex_toolkit_lftc_intro']                = 'Configure whether lead file attachments should be copied to the customer profile when a lead is converted.';
-$lang['perfex_toolkit_lftc_settings_heading']     = 'File Copy Settings';
-$lang['perfex_toolkit_lftc_option_label']         = 'Copy lead files on conversion';
-$lang['perfex_toolkit_lftc_option_help']          = 'When enabled, all files attached to a lead will be automatically copied to the new customer profile when that lead is converted to a customer.';
-$lang['perfex_toolkit_lftc_note']                 = 'Only local file uploads are copied. Files linked from external sources (e.g. Google Drive) are skipped. The original lead files are not deleted.';
-$lang['perfex_toolkit_lftc_save_btn']             = 'Save settings';
-$lang['perfex_toolkit_lftc_saved']                = 'Settings saved successfully.';
 
 $lang['perfex_toolkit_alternative_logos_delete_confirm']           = 'Are you sure you want to delete this logo?';
 $lang['perfex_toolkit_alternative_logos_delete_success']           = 'Logo deleted successfully.';

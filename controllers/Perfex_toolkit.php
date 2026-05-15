@@ -37,32 +37,17 @@ class Perfex_toolkit extends AdminController
         $key    = $this->input->post('feature_key');
         $action = $this->input->post('action'); // 'activate' | 'deactivate'
 
-        $allowed_keys = ['delete_invoices', 'alternative_logos', 'download_module', 'duplicate_wtl_form', 'lead_files_to_customer'];
+        $allowed_keys = ['delete_invoices', 'alternative_logos', 'download_module', 'duplicate_wtl_form'];
         if (! in_array($key, $allowed_keys, true) || ! in_array($action, ['activate', 'deactivate'], true)) {
             echo json_encode(['success' => false, 'message' => _l('perfex_toolkit_feature_toggle_invalid')]);
 
             return;
         }
 
-        // Map feature keys to their associated on/off options
-        $feature_options = [
-            'lead_files_to_customer' => 'ptk_lead_files_to_customer',
-        ];
-
         if ($action === 'activate') {
             $result = $this->ptk_features_model->activate($key);
-
-            // When re-activating a feature that owns a settings option, turn it back on
-            if ($result && isset($feature_options[$key])) {
-                update_option($feature_options[$key], '1');
-            }
         } else {
             $result = $this->ptk_features_model->deactivate($key);
-
-            // When deactivating a feature that owns a settings option, turn it off too
-            if ($result && isset($feature_options[$key])) {
-                update_option($feature_options[$key], '0');
-            }
         }
 
         echo json_encode([
@@ -205,15 +190,6 @@ class Perfex_toolkit extends AdminController
                 'icon'        => 'fa-solid fa-copy',
                 'available'   => ! staff_cant('create', 'leads'),
                 'active'      => $statuses['duplicate_wtl_form'] ?? true,
-            ],
-            [
-                'key'         => 'lead_files_to_customer',
-                'name'        => _l('perfex_toolkit_feature_lftc_name'),
-                'description' => _l('perfex_toolkit_feature_lftc_desc'),
-                'url'         => admin_url('perfex_toolkit/lead_files_to_customer'),
-                'icon'        => 'fa-solid fa-file-export',
-                'available'   => is_admin(),
-                'active'      => $statuses['lead_files_to_customer'] ?? true,
             ],
         ];
 

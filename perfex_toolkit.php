@@ -22,7 +22,6 @@ register_activation_hook(PERFEX_TOOLKIT_MODULE_NAME, 'perfex_toolkit_activation_
 register_uninstall_hook(PERFEX_TOOLKIT_MODULE_NAME, 'perfex_toolkit_uninstall_hook');
 
 hooks()->add_action('admin_init', 'perfex_toolkit_init_menu_items');
-hooks()->add_action('lead_converted_to_customer', 'perfex_toolkit_copy_lead_files_to_customer');
 
 register_language_files(PERFEX_TOOLKIT_MODULE_NAME, [PERFEX_TOOLKIT_MODULE_NAME]);
 $CI->load->helper(PERFEX_TOOLKIT_MODULE_NAME . '/perfex_toolkit');
@@ -100,100 +99,5 @@ function perfex_toolkit_init_menu_items()
             'position' => 5,
             'icon'     => 'fa-solid fa-copy',
         ]);
-    }
-
-    if (is_admin() && ($statuses['lead_files_to_customer'] ?? true)) {
-        $CI->app_menu->add_sidebar_children_item('perfex-toolkit', [
-            'slug'     => 'perfex-toolkit-lead-files-to-customer',
-            'name'     => _l('perfex_toolkit_nav_lftc'),
-            'href'     => admin_url('perfex_toolkit/lead_files_to_customer'),
-            'position' => 6,
-            'icon'     => 'fa-solid fa-file-export',
-        ]);
-    }
-}
-
-/**
- * Hook: fired by Perfex core when a lead is converted to a customer.
- * Copies all local lead files to the new customer profile when the setting is enabled.
- *
- * @param array{lead_id:int, customer_id:int} $data
- */
-function perfex_toolkit_copy_lead_files_to_customer($data)
-{
-    // Guard against duplicate hook firings within the same request
-    static $processed = [];
-    $pair_key = (int) $data['lead_id'] . '_' . (int) $data['customer_id'];
-    if (isset($processed[$pair_key])) {
-        return;
-    }
-    $processed[$pair_key] = true;
-
-    if (get_option('ptk_lead_files_to_customer') != '1') {
-        return;
-    }
-
-    $CI = &get_instance();
-    $CI->load->model('perfex_toolkit/ptk_features_model');
-    if (! $CI->ptk_features_model->is_active('lead_files_to_customer')) {
-        return;
-    }
-
-    $lead_id     = (int) $data['lead_id'];
-    $customer_id = (int) $data['customer_id'];
-
-    if ($lead_id <= 0 || $customer_id <= 0) {
-        return;
-    }
-
-    $CI = &get_instance();
-    $CI->load->model('misc_model');
-
-    // Fetch only local lead files (skip external/cloud-linked files)
-    $files = $CI->db
-        ->where('rel_id', $lead_id)
-        ->where('rel_type', 'lead')
-        ->group_start()
-            ->where('external', null)
-            ->or_where('external', '')
-        ->group_end()
-        ->get(db_prefix() . 'files')
-        ->result_array();
-
-    if (empty($files)) {
-        return;
-    }
-
-    $src_dir = LEAD_ATTACHMENTS_FOLDER . $lead_id . DIRECTORY_SEPARATOR;
-    $dst_dir = CLIENT_ATTACHMENTS_FOLDER . $customer_id . DIRECTORY_SEPARATOR;
-
-    if (! is_dir($dst_dir)) {
-        @mkdir($dst_dir, 0755, true);
-    }
-
-    foreach ($files as $file) {
-        $src_file = $src_dir . $file['file_name'];
-        if (! file_exists($src_file)) {
-            continue;
-        }
-
-        // Avoid overwriting an existing file — append a short unique suffix
-        $dst_filename = $file['file_name'];
-        if (file_exists($dst_dir . $dst_filename)) {
-            $info         = pathinfo($file['file_name']);
-            $ext          = isset($info['extension']) ? '.' . $info['extension'] : '';
-            $dst_filename = $info['filename'] . '_' . substr(uniqid(), -5) . $ext;
-        }
-
-        if (! @copy($src_file, $dst_dir . $dst_filename)) {
-            continue;
-        }
-
-        // Use Perfex's own method so the insert is handled identically to normal uploads
-        $CI->misc_model->add_attachment_to_database($customer_id, 'customer', [[
-            'file_name' => $dst_filename,
-            'filetype'  => $file['filetype'],
-            'staffid'   => $file['staffid'] ?: get_staff_user_id(),
-        ]]);
     }
 }

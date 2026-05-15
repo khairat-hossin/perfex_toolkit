@@ -87,17 +87,5 @@ if (! $CI->db->table_exists($features_table)) {
             'activated_at'        => $now,
             'deactivated_at'      => null,
         ],
-        [
-            'feature_key'         => 'lead_files_to_customer',
-            'feature_name'        => 'Copy Lead Files to Customer',
-            'feature_description' => 'When enabled, automatically copies all lead attachments to the customer profile when a lead is converted to a customer.',
-            'category'            => 'leads',
-            'is_active'           => 1,
-            'activated_at'        => $now,
-            'deactivated_at'      => null,
-        ],
     ]);
-
-// seed default value for the lead files setting (off by default — admin must consciously enable)
-add_option('ptk_lead_files_to_customer', '0');
 }
