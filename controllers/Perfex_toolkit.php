@@ -44,15 +44,22 @@ class Perfex_toolkit extends AdminController
             return;
         }
 
+        // Map feature keys to their associated on/off options
+        $feature_options = [
+            'lead_files_to_customer' => 'ptk_lead_files_to_customer',
+        ];
+
         if ($action === 'activate') {
             $result = $this->ptk_features_model->activate($key);
+
+            // When re-activating a feature that owns a settings option, turn it back on
+            if ($result && isset($feature_options[$key])) {
+                update_option($feature_options[$key], '1');
+            }
         } else {
             $result = $this->ptk_features_model->deactivate($key);
 
             // When deactivating a feature that owns a settings option, turn it off too
-            $feature_options = [
-                'lead_files_to_customer' => 'ptk_lead_files_to_customer',
-            ];
             if ($result && isset($feature_options[$key])) {
                 update_option($feature_options[$key], '0');
             }

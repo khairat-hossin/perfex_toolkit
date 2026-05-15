@@ -4,7 +4,15 @@
       "Bash(find /opt/homebrew/var/www/perfex_crm -type f \\\\\\( -name \"*lead*\" -o -name \"*webtocontact*\" -o -name \"*web_to_lead*\" -o -name \"*form*\" \\\\\\) | head -50)",
       "Bash(mysql -u root perfex_crm -e \"SELECT feature_key, is_active FROM tblptk_features;\")",
       "Bash(mysql -u root -e \"SELECT feature_key, is_active FROM perfex_crm.tblptk_features;\")",
-      "Bash(git -C /opt/homebrew/var/www/perfex_crm/modules/perfex_toolkit log --oneline -5)"
+      "Bash(git -C /opt/homebrew/var/www/perfex_crm/modules/perfex_toolkit log --oneline -5)",
+      "Bash(mysql -u root perfex_crm -e \"DESCRIBE tblfiles;\")",
+      "Bash(mysql -u root -e \"USE perfex_crm; DESCRIBE tblfiles;\")",
+      "Bash(mysql -uperfex -pperfex perfex_crm -e \"SELECT id, rel_id, rel_type, file_name, visible_to_customer, staffid FROM tblfiles WHERE rel_type='customer' ORDER BY id DESC LIMIT 10;\")",
+      "Bash(mysql -e \"SELECT id, rel_id, rel_type, file_name, visible_to_customer, staffid FROM tblfiles WHERE rel_type='customer' ORDER BY id DESC LIMIT 10;\" perfex_crm)",
+      "Bash(mkdir -p /opt/homebrew/var/www/perfex_crm/uploads/clients/25)",
+      "Bash(cp /opt/homebrew/var/www/perfex_crm/uploads/leads/270/a16f7e0b-b140-4c80-b63b-d898fa0cd78b.png /opt/homebrew/var/www/perfex_crm/uploads/clients/25/a16f7e0b-b140-4c80-b63b-d898fa0cd78b.png)",
+      "Bash(mkdir -p /opt/homebrew/var/www/perfex_crm/uploads/clients/24)",
+      "Bash(cp /opt/homebrew/var/www/perfex_crm/uploads/leads/274/pdf-test.pdf /opt/homebrew/var/www/perfex_crm/uploads/clients/24/pdf-test.pdf)"
     ]
   }
 }

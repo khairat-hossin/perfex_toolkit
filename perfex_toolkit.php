@@ -121,6 +121,14 @@ function perfex_toolkit_init_menu_items()
  */
 function perfex_toolkit_copy_lead_files_to_customer($data)
 {
+    // Guard against duplicate hook firings within the same request
+    static $processed = [];
+    $pair_key = (int) $data['lead_id'] . '_' . (int) $data['customer_id'];
+    if (isset($processed[$pair_key])) {
+        return;
+    }
+    $processed[$pair_key] = true;
+
     if (get_option('ptk_lead_files_to_customer') != '1') {
         return;
     }
@@ -139,6 +147,7 @@ function perfex_toolkit_copy_lead_files_to_customer($data)
     }
 
     $CI = &get_instance();
+    $CI->load->model('misc_model');
 
     // Fetch only local lead files (skip external/cloud-linked files)
     $files = $CI->db
@@ -155,8 +164,8 @@ function perfex_toolkit_copy_lead_files_to_customer($data)
         return;
     }
 
-    $src_dir  = rtrim(FCPATH, '/\\') . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'leads'   . DIRECTORY_SEPARATOR . $lead_id     . DIRECTORY_SEPARATOR;
-    $dst_dir  = rtrim(FCPATH, '/\\') . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'clients' . DIRECTORY_SEPARATOR . $customer_id . DIRECTORY_SEPARATOR;
+    $src_dir = LEAD_ATTACHMENTS_FOLDER . $lead_id . DIRECTORY_SEPARATOR;
+    $dst_dir = CLIENT_ATTACHMENTS_FOLDER . $customer_id . DIRECTORY_SEPARATOR;
 
     if (! is_dir($dst_dir)) {
         @mkdir($dst_dir, 0755, true);
@@ -169,27 +178,22 @@ function perfex_toolkit_copy_lead_files_to_customer($data)
         }
 
         // Avoid overwriting an existing file — append a short unique suffix
-        $dst_file  = $dst_dir . $file['file_name'];
-        if (file_exists($dst_file)) {
-            $info     = pathinfo($file['file_name']);
-            $ext      = isset($info['extension']) ? '.' . $info['extension'] : '';
-            $dst_file = $dst_dir . $info['filename'] . '_' . substr(uniqid(), -5) . $ext;
+        $dst_filename = $file['file_name'];
+        if (file_exists($dst_dir . $dst_filename)) {
+            $info         = pathinfo($file['file_name']);
+            $ext          = isset($info['extension']) ? '.' . $info['extension'] : '';
+            $dst_filename = $info['filename'] . '_' . substr(uniqid(), -5) . $ext;
         }
 
-        if (! @copy($src_file, $dst_file)) {
+        if (! @copy($src_file, $dst_dir . $dst_filename)) {
             continue;
         }
 
-        $CI->db->insert(db_prefix() . 'files', [
-            'rel_id'              => $customer_id,
-            'rel_type'            => 'customer',
-            'file_name'           => basename($dst_file),
-            'filetype'            => $file['filetype'],
-            'visible_to_customer' => $file['visible_to_customer'],
-            'attachment_key'      => app_generate_hash(),
-            'staffid'             => $file['staffid'],
-            'contact_id'          => 0,
-            'dateadded'           => date('Y-m-d H:i:s'),
-        ]);
+        // Use Perfex's own method so the insert is handled identically to normal uploads
+        $CI->misc_model->add_attachment_to_database($customer_id, 'customer', [[
+            'file_name' => $dst_filename,
+            'filetype'  => $file['filetype'],
+            'staffid'   => $file['staffid'] ?: get_staff_user_id(),
+        ]]);
     }
 }
