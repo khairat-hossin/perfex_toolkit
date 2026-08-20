@@ -99,8 +99,8 @@ class Alternative_logos extends AdminController
             show_404();
         }
 
-        if (staff_cant('create', 'customers')) {
-            access_denied('customers');
+        if (! is_admin()) {
+            access_denied('alternative_logos');
         }
 
         $this->form_validation->set_data($this->input->post());
@@ -185,7 +185,7 @@ class Alternative_logos extends AdminController
             return;
         }
 
-        if (staff_cant('create', 'customers')) {
+        if (! is_admin()) {
             $this->output->set_content_type('application/json', 'utf-8');
             echo json_encode(['success' => false, 'message' => ''], JSON_UNESCAPED_UNICODE);
 
@@ -223,8 +223,8 @@ class Alternative_logos extends AdminController
             show_404();
         }
 
-        if (staff_cant('create', 'customers')) {
-            access_denied('customers');
+        if (! is_admin()) {
+            access_denied('alternative_logos');
         }
 
         $id = (int) $this->input->post('id');
@@ -322,8 +322,8 @@ class Alternative_logos extends AdminController
             redirect(admin_url('perfex_toolkit/alternative_logos'));
         }
 
-        if (staff_cant('delete', 'customers')) {
-            access_denied('customers');
+        if (! is_admin()) {
+            access_denied('alternative_logos');
         }
 
         $row = $this->alternative_logos_model->get_by_id($id);

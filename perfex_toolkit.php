@@ -22,9 +22,76 @@ register_activation_hook(PERFEX_TOOLKIT_MODULE_NAME, 'perfex_toolkit_activation_
 register_uninstall_hook(PERFEX_TOOLKIT_MODULE_NAME, 'perfex_toolkit_uninstall_hook');
 
 hooks()->add_action('admin_init', 'perfex_toolkit_init_menu_items');
+hooks()->add_action('admin_init', 'ptk_preserve_lead_status_boot');
 
 register_language_files(PERFEX_TOOLKIT_MODULE_NAME, [PERFEX_TOOLKIT_MODULE_NAME]);
 $CI->load->helper(PERFEX_TOOLKIT_MODULE_NAME . '/perfex_toolkit');
+
+/**
+ * Boot the "Preserve Lead Status on Conversion" feature.
+ * Fires in the admin controller constructor — before any method runs.
+ * If the request is a lead-conversion POST, snapshot the lead's current
+ * status so we can restore it after Perfex resets it to default.
+ */
+function ptk_preserve_lead_status_boot()
+{
+    $CI = &get_instance();
+    $CI->load->model(PERFEX_TOOLKIT_MODULE_NAME . '/ptk_features_model');
+    if (! $CI->ptk_features_model->is_active('preserve_lead_status')) {
+        return;
+    }
+
+    // Register the restore callback for later in this same request.
+    hooks()->add_action('lead_converted_to_customer', '_ptk_restore_lead_status');
+
+    // If this request is the actual conversion POST, grab the original status now.
+    if (strtolower($CI->router->fetch_class()) === 'leads'
+        && $CI->router->fetch_method() === 'convert_to_customer'
+        && $CI->input->server('REQUEST_METHOD') === 'POST'
+        && $CI->input->post('leadid')) {
+        $lead_id = (int) $CI->input->post('leadid');
+        if ($lead_id > 0) {
+            $CI->db->select('status');
+            $CI->db->where('id', $lead_id);
+            $row = $CI->db->get(db_prefix() . 'leads')->row();
+            if ($row) {
+                _ptk_lead_status_store($lead_id, (int) $row->status);
+            }
+        }
+    }
+}
+
+/**
+ * Static key-value store scoped to this request.
+ * Pass $status to write; omit (or pass null) to read.
+ */
+function _ptk_lead_status_store($lead_id, $status = null)
+{
+    static $store = [];
+    if ($status !== null) {
+        $store[$lead_id] = $status;
+    }
+    return $store[$lead_id] ?? null;
+}
+
+/**
+ * Callback for 'lead_converted_to_customer' hook.
+ * Restores the lead status to whatever it was before Perfex reset it.
+ */
+function _ptk_restore_lead_status($params)
+{
+    $lead_id = isset($params['lead_id']) ? (int) $params['lead_id'] : 0;
+    if ($lead_id <= 0) {
+        return;
+    }
+    $original = _ptk_lead_status_store($lead_id);
+    if ($original === null) {
+        return;
+    }
+    $CI = &get_instance();
+    $CI->db->where('id', $lead_id);
+    $CI->db->update(db_prefix() . 'leads', ['status' => $original]);
+}
 
 function perfex_toolkit_activation_hook()
 {

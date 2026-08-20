@@ -11,5 +11,3 @@ foreach (['ptk_alternative_logos', 'ptk_features'] as $t) {
     }
 }
 
-// Remove any options added by this module
-$CI->db->where_in('name', ['ptk_lead_files_to_customer'])->delete(db_prefix() . 'options');

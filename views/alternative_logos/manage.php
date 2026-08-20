@@ -23,7 +23,10 @@ $showEditPreview = $editFileU !== '';
     <div class="content">
         <div class="row tw-mb-2">
             <div class="col-md-12">
-                <div class="tw-mb-6">
+                <a href="<?= admin_url('perfex_toolkit'); ?>" class="btn btn-default btn-sm">
+                    <i class="fa fa-arrow-left tw-mr-1"></i><?= e(_l('perfex_toolkit_back_dashboard')); ?>
+                </a>
+                <div class="tw-mb-6 tw-mt-3">
                     <div class="tw-mb-3">
                         <h4 class="tw-my-0 tw-font-bold tw-text-xl">
                             <?= _l('perfex_toolkit_alternative_logos_title'); ?>
@@ -33,7 +36,7 @@ $showEditPreview = $editFileU !== '';
                 <div class="tw-flex tw-justify-between tw-items-center tw-gap-x-6">
                     <div class="tw-flex tw-justify-between tw-items-center tw-gap-x-1 tw-w-full">
                         <input type="search" class="form-control mbot15 mtop15" id="pk_alt_logo_for" name="pk_alt_logo_for_filter" autocomplete="off" style="max-width:280px" placeholder="<?= e(_l('search')); ?>…">
-                        <?php if (staff_can('create', 'customers')) { ?>
+                        <?php if (is_admin()) { ?>
                         <button type="button" class="btn btn-primary" data-toggle="modal"
                             data-target="#pk_alt_logo_upload_modal">
                             <i class="fa-regular fa-plus tw-mr-1"></i>
@@ -115,7 +118,7 @@ $showEditPreview = $editFileU !== '';
     </div>
 </div>
 
-<?php if (staff_can('create', 'customers')) { ?>
+<?php if (is_admin()) { ?>
 <div class="modal fade" id="pk_alt_logo_edit_modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -200,7 +203,7 @@ $showEditPreview = $editFileU !== '';
             a_logo_file: { required: true },
         });
 
-        <?php if (staff_can('create', 'customers')) { ?>
+        <?php if (is_admin()) { ?>
         appValidateForm($('#pk_alt_logo_edit_form'), {
             logo_for: { required: true, maxlength: 191 },
             logo_number: { required: true, number: true, min: pkMinLogo },

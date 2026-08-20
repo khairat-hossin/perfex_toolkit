@@ -4,7 +4,10 @@
     <div class="content">
         <div class="row tw-mb-2">
             <div class="col-md-12">
-                <div class="tw-mb-6">
+                <a href="<?= admin_url('perfex_toolkit'); ?>" class="btn btn-default btn-sm">
+                    <i class="fa fa-arrow-left tw-mr-1"></i><?= e(_l('perfex_toolkit_back_dashboard')); ?>
+                </a>
+                <div class="tw-mb-6 tw-mt-3">
                     <div class="tw-mb-3">
                         <h4 class="tw-my-0 tw-font-bold tw-text-xl">
                             <i class="fa-solid fa-download tw-mr-2"></i>

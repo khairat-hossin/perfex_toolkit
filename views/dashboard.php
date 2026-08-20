@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="panel-footer tw-border-t tw-border-neutral-200/80 tw-bg-neutral-50/50 tw-px-4 tw-py-3 tw-flex tw-items-center tw-gap-2">
-                        <?php if (! empty($feature['available']) && ! empty($feature['active'])) { ?>
+                        <?php if (! empty($feature['available']) && ! empty($feature['active']) && ! empty($feature['url'])) { ?>
                             <a href="<?= e($feature['url']); ?>" class="btn btn-primary btn-sm">
                                 <?= e(_l('perfex_toolkit_open_feature')); ?>
                                 <i class="fa fa-arrow-right tw-ml-1"></i>

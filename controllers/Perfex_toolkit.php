@@ -37,7 +37,7 @@ class Perfex_toolkit extends AdminController
         $key    = $this->input->post('feature_key');
         $action = $this->input->post('action'); // 'activate' | 'deactivate'
 
-        $allowed_keys = ['delete_invoices', 'alternative_logos', 'download_module', 'duplicate_wtl_form'];
+        $allowed_keys = ['delete_invoices', 'alternative_logos', 'download_module', 'duplicate_wtl_form', 'preserve_lead_status'];
         if (! in_array($key, $allowed_keys, true) || ! in_array($action, ['activate', 'deactivate'], true)) {
             echo json_encode(['success' => false, 'message' => _l('perfex_toolkit_feature_toggle_invalid')]);
 
@@ -190,6 +190,15 @@ class Perfex_toolkit extends AdminController
                 'icon'        => 'fa-solid fa-copy',
                 'available'   => ! staff_cant('create', 'leads'),
                 'active'      => $statuses['duplicate_wtl_form'] ?? true,
+            ],
+            [
+                'key'         => 'preserve_lead_status',
+                'name'        => _l('perfex_toolkit_feature_preserve_lead_status_name'),
+                'description' => _l('perfex_toolkit_feature_preserve_lead_status_desc'),
+                'url'         => '',
+                'icon'        => 'fa-solid fa-tag',
+                'available'   => is_admin(),
+                'active'      => $statuses['preserve_lead_status'] ?? true,
             ],
         ];
 

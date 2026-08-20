@@ -114,3 +114,7 @@ $lang['perfex_toolkit_dup_wtl_not_found']               = 'Form not found.';
 $lang['perfex_toolkit_alternative_logos_delete_confirm']           = 'Are you sure you want to delete this logo?';
 $lang['perfex_toolkit_alternative_logos_delete_success']           = 'Logo deleted successfully.';
 $lang['perfex_toolkit_alternative_logos_delete_error']             = 'Could not delete the logo.';
+
+// Preserve Lead Status on Conversion
+$lang['perfex_toolkit_feature_preserve_lead_status_name'] = 'Preserve Lead Status on Conversion';
+$lang['perfex_toolkit_feature_preserve_lead_status_desc'] = 'When converting a lead to a customer, keep the lead\'s current status instead of resetting it to the Perfex default status.';

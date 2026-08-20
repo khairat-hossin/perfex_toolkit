@@ -89,3 +89,12 @@ if (! $CI->db->table_exists($features_table)) {
         ],
     ]);
 }
+
+// Upsert any features added after the initial install (safe to run every activation).
+$CI->db->query("INSERT IGNORE INTO `{$features_table}`
+    (feature_key, feature_name, feature_description, category, is_active, activated_at)
+    VALUES
+    ('preserve_lead_status', 'Preserve Lead Status on Conversion',
+     'When converting a lead to a customer, keep the lead\\'s current status instead of resetting it to the Perfex default.',
+     'leads', 1, NOW())"
+);
