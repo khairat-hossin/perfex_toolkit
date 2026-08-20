@@ -98,3 +98,11 @@ $CI->db->query("INSERT IGNORE INTO `{$features_table}`
      'When converting a lead to a customer, keep the lead\\'s current status instead of resetting it to the Perfex default.',
      'leads', 1, NOW())"
 );
+
+$CI->db->query("INSERT IGNORE INTO `{$features_table}`
+    (feature_key, feature_name, feature_description, category, is_active, activated_at)
+    VALUES
+    ('ticket_case_history', 'Non-Customer Case History',
+     'On non-customer tickets, shows a case count badge and a link to view all previous tickets from the same email.',
+     'tickets', 1, NOW())"
+);

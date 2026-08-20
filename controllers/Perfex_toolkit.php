@@ -37,7 +37,7 @@ class Perfex_toolkit extends AdminController
         $key    = $this->input->post('feature_key');
         $action = $this->input->post('action'); // 'activate' | 'deactivate'
 
-        $allowed_keys = ['delete_invoices', 'alternative_logos', 'download_module', 'duplicate_wtl_form', 'preserve_lead_status'];
+        $allowed_keys = ['delete_invoices', 'alternative_logos', 'download_module', 'duplicate_wtl_form', 'preserve_lead_status', 'ticket_case_history'];
         if (! in_array($key, $allowed_keys, true) || ! in_array($action, ['activate', 'deactivate'], true)) {
             echo json_encode(['success' => false, 'message' => _l('perfex_toolkit_feature_toggle_invalid')]);
 
@@ -146,6 +146,54 @@ class Perfex_toolkit extends AdminController
     }
 
     /**
+     * AJAX: return HTML list of all non-customer tickets sharing the given email.
+     * Used by the case-history modal injected into the single ticket view.
+     */
+    public function ticket_case_history()
+    {
+        if (! is_staff_member()) {
+            ajax_access_denied();
+        }
+
+        if (! $this->ptk_features_model->is_active('ticket_case_history')) {
+            show_404();
+        }
+
+        $email   = $this->input->get('email', true);
+        $exclude = (int) $this->input->get('exclude');
+
+        if (! $email) {
+            echo '<p class="text-center text-muted tw-py-6">' .
+                 e(_l('perfex_toolkit_casehistory_no_email')) . '</p>';
+            return;
+        }
+
+        $this->db->select(
+            db_prefix() . 'tickets.ticketid, ' .
+            db_prefix() . 'tickets.subject, ' .
+            db_prefix() . 'tickets.date, ' .
+            db_prefix() . 'tickets_status.name as status_name, ' .
+            db_prefix() . 'tickets_status.statuscolor, ' .
+            db_prefix() . 'departments.name as department_name'
+        );
+        $this->db->from(db_prefix() . 'tickets');
+        $this->db->join(db_prefix() . 'tickets_status',
+            db_prefix() . 'tickets_status.ticketstatusid = ' . db_prefix() . 'tickets.status', 'left');
+        $this->db->join(db_prefix() . 'departments',
+            db_prefix() . 'departments.departmentid = ' . db_prefix() . 'tickets.department', 'left');
+        $this->db->where(db_prefix() . 'tickets.email', $email);
+        $this->db->where(db_prefix() . 'tickets.userid', 0);
+        $this->db->order_by(db_prefix() . 'tickets.date', 'desc');
+        $tickets = $this->db->get()->result_array();
+
+        $this->load->view('ticket_case_history/results', [
+            'tickets'            => $tickets,
+            'email'              => $email,
+            'current_ticket_id'  => $exclude,
+        ]);
+    }
+
+    /**
      * Register each feature for the dashboard (add new items here as you add tools).
      *
      * @return array<int, array{key:string,name:string,description:string,url:string,icon:string,available:bool,active:bool}>
@@ -199,6 +247,15 @@ class Perfex_toolkit extends AdminController
                 'icon'        => 'fa-solid fa-tag',
                 'available'   => is_admin(),
                 'active'      => $statuses['preserve_lead_status'] ?? true,
+            ],
+            [
+                'key'         => 'ticket_case_history',
+                'name'        => _l('perfex_toolkit_feature_casehistory_name'),
+                'description' => _l('perfex_toolkit_feature_casehistory_desc'),
+                'url'         => '',
+                'icon'        => 'fa-solid fa-clock-rotate-left',
+                'available'   => is_admin(),
+                'active'      => $statuses['ticket_case_history'] ?? true,
             ],
         ];
 

@@ -20,7 +20,14 @@
       "Bash(mysql -u root perfex_crm -e \"INSERT IGNORE INTO tblptk_features \\(feature_key, feature_name, feature_description, category, is_active, activated_at\\) VALUES \\('preserve_lead_status', 'Preserve Lead Status on Conversion', 'When converting a lead to a customer, keep the lead\\\\\\\\'s current status instead of resetting it to the Perfex default.', 'leads', 1, NOW\\(\\)\\); SELECT feature_key, is_active FROM tblptk_features ORDER BY id;\")",
       "Bash(mysql -u root -e \"SHOW DATABASES LIKE '%crm%'; SHOW DATABASES LIKE '%perfex%';\")",
       "Bash(mysql -u root -e \"SELECT TABLE_SCHEMA FROM information_schema.TABLES WHERE TABLE_NAME LIKE '%ptk_features%';\")",
-      "Bash(mysql -u root perfex_crm_340 -e \"INSERT IGNORE INTO tblptk_features \\(feature_key, feature_name, feature_description, category, is_active, activated_at\\) VALUES \\('preserve_lead_status', 'Preserve Lead Status on Conversion', 'When converting a lead to a customer, keep the lead\\\\\\\\'s current status instead of resetting it to the Perfex default.', 'leads', 1, NOW\\(\\)\\); SELECT feature_key, is_active FROM tblptk_features ORDER BY id;\")"
+      "Bash(mysql -u root perfex_crm_340 -e \"INSERT IGNORE INTO tblptk_features \\(feature_key, feature_name, feature_description, category, is_active, activated_at\\) VALUES \\('preserve_lead_status', 'Preserve Lead Status on Conversion', 'When converting a lead to a customer, keep the lead\\\\\\\\'s current status instead of resetting it to the Perfex default.', 'leads', 1, NOW\\(\\)\\); SELECT feature_key, is_active FROM tblptk_features ORDER BY id;\")",
+      "Bash(mysql -u root perfex_crm_340 -e \"DESCRIBE tbltickets;\")",
+      "Bash(mysql -u root perfex_crm_340 -e \"DESCRIBE tbldepartments_tickets;\")",
+      "Bash(mysql -u root perfex_crm_340 -e \"SHOW TABLES LIKE '%ticket%';\")",
+      "Bash(mysql -u root perfex_crm_340 -e \"SELECT id, name FROM tbltickets_status;\")",
+      "Bash(mysql -u root perfex_crm_340 -e \"DESCRIBE tbltickets_status;\")",
+      "Bash(mysql -u root perfex_crm_340 -e ' *)",
+      "Bash(mysql -u root perfex_crm_340 -e \"SELECT ticketid, userid, name, email, subject FROM tbltickets WHERE userid = 0 ORDER BY ticketid DESC LIMIT 10;\")"
     ]
   }
 }

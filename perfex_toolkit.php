@@ -23,6 +23,7 @@ register_uninstall_hook(PERFEX_TOOLKIT_MODULE_NAME, 'perfex_toolkit_uninstall_ho
 
 hooks()->add_action('admin_init', 'perfex_toolkit_init_menu_items');
 hooks()->add_action('admin_init', 'ptk_preserve_lead_status_boot');
+hooks()->add_action('ticket_admin_single_page_loaded', 'ptk_ticket_case_history_inject');
 
 register_language_files(PERFEX_TOOLKIT_MODULE_NAME, [PERFEX_TOOLKIT_MODULE_NAME]);
 $CI->load->helper(PERFEX_TOOLKIT_MODULE_NAME . '/perfex_toolkit');
@@ -91,6 +92,44 @@ function _ptk_restore_lead_status($params)
     $CI = &get_instance();
     $CI->db->where('id', $lead_id);
     $CI->db->update(db_prefix() . 'leads', ['status' => $original]);
+}
+
+/**
+ * Fired after the single ticket admin page is rendered.
+ * Injects a count badge on the "Other Tickets" tab and a clickable link
+ * near the email field that opens a modal with the full case history.
+ * Only runs for non-customer tickets (userid = 0).
+ *
+ * @param object $ticket
+ */
+function ptk_ticket_case_history_inject($ticket)
+{
+    $CI = &get_instance();
+    $CI->load->model(PERFEX_TOOLKIT_MODULE_NAME . '/ptk_features_model');
+    if (! $CI->ptk_features_model->is_active('ticket_case_history')) {
+        return;
+    }
+
+    if ((int) $ticket->userid !== 0) {
+        return;
+    }
+
+    // Read email directly from tbltickets to avoid JOIN column-aliasing ambiguity
+    // in the object returned by get_ticket_by_id().
+    $CI->db->select('email');
+    $CI->db->where('ticketid', (int) $ticket->ticketid);
+    $row   = $CI->db->get(db_prefix() . 'tickets')->row();
+    $email = trim((string) ($row->email ?? ''));
+    if ($email === '') {
+        return;
+    }
+
+    $CI->db->where('email', $email);
+    $CI->db->where('userid', 0);
+    $other_count = (int) $CI->db->count_all_results(db_prefix() . 'tickets');
+
+    extract(['ticket' => $ticket, 'email' => $email, 'other_count' => $other_count]);
+    include module_views_path(PERFEX_TOOLKIT_MODULE_NAME, 'ticket_case_history/inject.php');
 }
 
 function perfex_toolkit_activation_hook()

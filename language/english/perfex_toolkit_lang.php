@@ -118,3 +118,16 @@ $lang['perfex_toolkit_alternative_logos_delete_error']             = 'Could not 
 // Preserve Lead Status on Conversion
 $lang['perfex_toolkit_feature_preserve_lead_status_name'] = 'Preserve Lead Status on Conversion';
 $lang['perfex_toolkit_feature_preserve_lead_status_desc'] = 'When converting a lead to a customer, keep the lead\'s current status instead of resetting it to the Perfex default status.';
+
+// Non-Customer Case History
+$lang['perfex_toolkit_feature_casehistory_name'] = 'Non-Customer Case History';
+$lang['perfex_toolkit_feature_casehistory_desc'] = 'On any non-customer ticket, shows a count badge on the "Other Tickets" tab and adds a clickable link near the email field to view all previous cases from that email address.';
+
+$lang['perfex_toolkit_casehistory_modal_title']  = 'Case History';
+$lang['perfex_toolkit_casehistory_has_previous'] = '{n} case(s) from this email — click to view all';
+$lang['perfex_toolkit_casehistory_no_previous']  = 'No other cases on record for this email';
+$lang['perfex_toolkit_casehistory_none_found']   = 'No other cases found for this email address.';
+$lang['perfex_toolkit_casehistory_showing']      = 'Showing %d case(s). Click a ticket number to open it.';
+$lang['perfex_toolkit_casehistory_load_error']   = 'Could not load case history. Please try again.';
+$lang['perfex_toolkit_casehistory_no_email']     = 'No email address provided.';
+$lang['perfex_toolkit_casehistory_col_date']     = 'Date Opened';
